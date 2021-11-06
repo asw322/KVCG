@@ -297,8 +297,8 @@ __forceinline__ __device__ unsigned long long warp_allocate(WarpAllocCtx<K, V> c
 
     MemoryBlock<K, V> *blocks = ctx.blocks[warpIdx].memblocks;
     unsigned bitmap = blocks[laneId].bitmap;
-    int index = __ffs((int) bitmap) - 1;
-    int ballotThread = __ffs((int) __ballot_sync(~0u, (index != -1))) - 1;
+    int index = __ffs((int) bitmap) - 1;                                                // Finds the position of the least significant bit set to 1
+    int ballotThread = __ffs((int) __ballot_sync(~0u, (index != -1))) - 1;              // __ffs operation returns 1 or 2 (LSB or second bit next to LSB)
     if (ballotThread == -1) {
         if(laneId == 0)
             printf("Ran out of memory\n");
